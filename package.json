@@ -7,8 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "preprod": "nodemon www/app.js",
-    "start-prod": "pm2 start ecosystem.config.js --env production",
+    "preprod": "nodemon www/app.js && echo \"Please, visit : http://localhost:3000\"",
+    "start-prod": "pm2 start ecosystem.config.js --env production && echo \"Please, visit : http://localhost:3000\"",
     "stop-prod": "pm2 stop app",
     "test": "jest"
   },

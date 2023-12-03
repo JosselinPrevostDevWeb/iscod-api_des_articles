@@ -29,6 +29,7 @@ const userSchema = Schema({
       values: ["admin", "member"],
       message: "{VALUE} inconnue",
     },
+    default: "member",
   },
   age: Number,
 });

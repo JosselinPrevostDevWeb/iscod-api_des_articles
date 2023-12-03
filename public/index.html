@@ -99,6 +99,14 @@ createApp({
       socket.on('user:delete', (data) => {
         this.users = this.users.filter(user => user._id != data.id)
       })
+
+      socket.on('article:create', (data) => {
+        this.articles.push(data)
+      })
+
+      socket.on('article:delete', (data) => {
+        this.articles = this.articles.filter(aritcle => aritcle._id != data.id)
+      })
     },
     async remove(userId) {
       await axios.delete('/api/users/' + userId, {

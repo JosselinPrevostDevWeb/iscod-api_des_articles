@@ -5,7 +5,7 @@ class ArticlesController {
         try {
             const data = req.body;
             if (req.user._id) {
-              data.userId = req.user._id; // Ajoute l'ID de l'utilisateur à l'objet data
+              data.userId = req.user._id; // Ajout de l'id utilisateur à l'objet data
             } else {
               return res.status(403).json({ message: 'Forbidden' });
             }
@@ -16,7 +16,7 @@ class ArticlesController {
             next(error)
         }
     };
-    
+
     async update(req, res, next) {
         try {
           if (req.user.role !== 'admin') {
@@ -30,7 +30,7 @@ class ArticlesController {
           next(error);
         }
     };
-    
+
     async delete(req, res, next) {
         try {
           if (req.user.role !== 'admin') {
