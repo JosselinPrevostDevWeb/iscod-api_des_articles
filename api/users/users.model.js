@@ -13,10 +13,10 @@ const userSchema = Schema({
     type: String,
     required: true,
     unique: true,
-    /* validate: {
+    validate: {
       validator: isEmail,
       message: (props) => `${props.value} is not correct`,
-    },*/
+  },
   },
   date: {
     type: Date,
@@ -41,6 +41,7 @@ const userSchema = Schema({
   }
   next()
 }) */
+
 
 userSchema.pre("save", async function () {
   this.email = this.email.toLowerCase();

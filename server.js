@@ -6,9 +6,9 @@ const NotFoundError = require("./errors/not-found");
 const userRouter = require("./api/users/users.router");
 const userAuthRouter = require("./api/users/users.auth.router");
 const usersController = require("./api/users/users.controller");
-const authMiddleware = require("./middlewares/auth");
 const articlesRouter = require('./api/articles/articles.router');
-require("./api/articles/articles.model"); // temporaire
+const articlesAuthRouter = require("./api/articles/articles.auth.router");
+const authMiddleware = require("./middlewares/auth");
 const app = express();
 
 const server = http.createServer(app);
@@ -30,16 +30,22 @@ app.use((req, res, next) => {
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/users", userRouter);
-app.use("/api/users", authMiddleware, userAuthRouter);
-app.use('/api/articles', articlesRouter);
+// Routes publiques
 app.post("/login", usersController.login);
+app.use("/api/users", userRouter);
+app.use('/api/articles', articlesRouter);
+
+// Routes protégées par le middleware d'authentification
+app.use("/api/users", authMiddleware, userAuthRouter);
+app.use('/api/articles', authMiddleware, articlesAuthRouter);
 
 app.use("/", express.static("public"));
+
 
 app.use((req, res, next) => {
   next(new NotFoundError());
 });
+
 
 app.use((error, req, res, next) => {
   const status = error.status || 500;
@@ -53,5 +59,5 @@ app.use((error, req, res, next) => {
 
 module.exports = {
   app,
-  server,
+  server
 };

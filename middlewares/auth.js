@@ -1,7 +1,8 @@
 const UnauthorizedError = require("../errors/unauthorized");
 const jwt = require("jsonwebtoken");
 const config = require("../config");
-const User = require("../api/users/users.model");
+const UserService = require("../api/users/users.service");
+
 module.exports = async (req, res, next) => {
   try {
     const token = req.headers["x-access-token"];
@@ -9,13 +10,16 @@ module.exports = async (req, res, next) => {
       throw "No token";
     }
     const decoded = jwt.verify(token, config.secretJwtToken);
-    const user = await User.findById(decoded.id); // Récupère l'utilisateur de la base de données
+    // console.log(decoded);
+    const user = await UserService.get(decoded.userId); // Récupère l'utilisateur de la base de données
     if (!user) {
       throw "User not found";
     }
     req.user = user; // Maintenant req.user contient toutes les informations de l'utilisateur
+    req.decode = decoded;
     next();
   } catch (message) {
+    // console.log('erreur ici !!!');
     next(new UnauthorizedError(message));
   }
 };

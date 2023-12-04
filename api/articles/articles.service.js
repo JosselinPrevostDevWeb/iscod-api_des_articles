@@ -1,6 +1,12 @@
 const Article = require('./articles.model');
 
 class ArticlesServices {
+    getAll() {
+        return Article.find({});
+    };
+    get(id) {
+        return Article.findById(id);
+    };
     create(data) {
         const article = new Article(data);
         return article.save();
@@ -14,8 +20,9 @@ class ArticlesServices {
         return  Article.deleteOne({ _id: id });
     };
 
-    async getByUserId(userId) {
-        return await Article.find({ author: userId }).populate('author', '-password');
+    // Pour alimenter la route 'api/users/:userId/articles'
+    getByUserId(userId) {
+        return Article.find({ user: userId }).populate('user', '-password');
     }
 }
 

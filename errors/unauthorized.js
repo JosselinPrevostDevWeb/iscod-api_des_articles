@@ -1,3 +1,4 @@
+//full ok
 class UnauthorizedError extends Error {
   status = 401;
   constructor(message = "Unauthorized") {

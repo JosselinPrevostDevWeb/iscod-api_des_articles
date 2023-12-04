@@ -1,3 +1,6 @@
+/**
+ * Cette page contient toutes les routes relatives aux utilisateurs nécessitant une authentification
+ */
 const express = require("express");
 const usersController = require("./users.controller");
 const router = express.Router();

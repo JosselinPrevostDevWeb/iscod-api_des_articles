@@ -6,6 +6,7 @@ const usersService = require("./users.service");
 const articlesService = require("../articles/articles.service");
 
 class UsersController {
+
   async getAll(req, res, next) {
     try {
       const users = await usersService.getAll();
@@ -14,6 +15,7 @@ class UsersController {
       next(err);
     }
   }
+
   async getById(req, res, next) {
     try {
       const id = req.params.id;
@@ -26,6 +28,7 @@ class UsersController {
       next(err);
     }
   }
+
   async create(req, res, next) {
     try {
       const user = await usersService.create(req.body);
@@ -36,11 +39,17 @@ class UsersController {
       next(err);
     }
   }
+
   async update(req, res, next) {
     try {
-      const id = req.params.id;
+      const asker = req.user._id.toString();
+      const target = req.params.id;
+      // console.log(asker, target);
+      if ((req.user.role !== 'admin') && (asker !== target)) {
+        throw new UnauthorizedError('You are trying to modify an user that is not yourself. You need to be an admin to do that.');
+      }
       const data = req.body;
-      const userModified = await usersService.update(id, data);
+      const userModified = await usersService.update(target, data);
       userModified.password = undefined;
       res.json(userModified);
     } catch (err) {
@@ -49,14 +58,19 @@ class UsersController {
   }
   async delete(req, res, next) {
     try {
-      const id = req.params.id;
-      await usersService.delete(id);
-      req.io.emit("user:delete", { id });
+      const asker = req.user._id.toString();
+      const target = req.params.id;
+      if ((req.user.role !== 'admin') && (asker !== target)) {
+        throw new UnauthorizedError('You are trying to delete an user that is not yourself. You need to be an admin to do that.');
+      }
+      await usersService.delete(target);
+      req.io.emit("user:delete", { target });
       res.status(204).send();
     } catch (err) {
       next(err);
     }
   }
+
   async login(req, res, next) {
     try {
       const { email, password } = req.body;
@@ -67,20 +81,14 @@ class UsersController {
       const token = jwt.sign({ userId }, config.secretJwtToken, {
         expiresIn: "3d",
       });
-      req.body.userId = userId;
-      req.body.token = token;
-      res.json(req.body);
+      res.json({ token });
     } catch (err) {
       next(err);
     }
   }
   async me(req, res, next) {
     try {
-        const user = await usersService.get(req.user.userId);
-        if (!user) {
-            throw new NotFoundError();
-        }
-        res.json(user);
+        res.json(req.user); // Renvoi simplement les informations intégré pendant l'authentification via le token
     } catch (err) {
         next(err);
     }
@@ -88,6 +96,7 @@ class UsersController {
   async getArticles(req, res, next) {
     try {
       const userId = req.params.userId;
+      // console.log(userId);
       const articles = await articlesService.getByUserId(userId);
       res.json(articles);
     } catch (err) {
