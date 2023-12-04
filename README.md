@@ -5,6 +5,10 @@ After clone the project, please run the following for get all the dependencies :
 npm install
 ``````
 
+For start the preproduction environnement, please run the following :
+``````
+npm run start-preprod
+``````
 For start the production environnement, please run the following :
 ``````
 npm run start-prod
